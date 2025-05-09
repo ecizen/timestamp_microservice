@@ -15,7 +15,7 @@ router.get('/:date_string', (req, res) => {
   if (date.toString() === "Invalid Date") {
     const timestamp = parseInt(req.params.date_string);
     if (!isNaN(timestamp)) {
-      date = new Date(timestamp);
+      date = new Date(timestamp);   
     }
   }
 
