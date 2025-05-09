@@ -5,8 +5,7 @@ router.get('/', (req, res) => {
   const date = new Date();
   res.json({
     unix: date.getTime(),
-    iso: date.toISOString(),
-    local: date.toLocaleString(),
+    utc: date.toUTCString()
   });
 });
 
@@ -25,8 +24,7 @@ router.get('/:date_string', (req, res) => {
   } else {
     res.json({
       unix: date.getTime(),
-      iso: date.toISOString(),
-      local: date.toLocaleString(),
+        utc: date.toUTCString()
     });
   }
 });
