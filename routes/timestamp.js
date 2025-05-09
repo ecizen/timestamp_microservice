@@ -1,32 +1,32 @@
 const express = require('express');
 const router = express.Router();
 
-router.get('/', (req, res) => {
-  const date = new Date();
-  res.json({
-    unix: date.getTime(),
-    utc: date.toUTCString()
-  });
-});
+router.get('/:date', (req, res) => {
+  let { date } = req.params;
+  let parsedDate;
 
-router.get('/:date_string', (req, res) => {
-  let date = new Date(req.params.date_string);
-
-  if (date.toString() === "Invalid Date") {
-    const timestamp = parseInt(req.params.date_string);
-    if (!isNaN(timestamp)) {
-      date = new Date(timestamp);   
+  // Jika tidak ada parameter, gunakan waktu saat ini
+  if (!date) {
+    parsedDate = new Date();
+  } else {
+    // Jika berupa angka dan bukan ISO string, parse sebagai Unix Timestamp
+    if (!isNaN(date)) {
+      parsedDate = new Date(parseInt(date));
+    } else {
+      parsedDate = new Date(date);
     }
   }
 
-  if (date.toString() === "Invalid Date") {
-    res.json({ error: "Invalid Date" });
-  } else {
-    res.json({
-      unix: date.getTime(),
-        utc: date.toUTCString()
-    });
+  // Cek validitas
+  if (parsedDate.toString() === 'Invalid Date') {
+    return res.json({ error: 'Invalid Date' });
   }
+
+  // Respons sesuai FCC test
+  return res.json({
+    unix: parsedDate.getTime(),
+    utc: parsedDate.toUTCString(),
+  });
 });
 
 module.exports = router;
