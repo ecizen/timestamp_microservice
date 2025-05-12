@@ -2,30 +2,47 @@ const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.get("/api/hello", function (req, res) {
+// Middleware untuk handle CORS (jika diperlukan)
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  next();
+});
+
+// Endpoint test
+app.get("/api/hello", (req, res) => {
   res.json({ greeting: "hello API" });
 });
 
-app.get("/api/", (req, res) => {
+// Endpoint utama
+app.get("/api/:date?", (req, res) => {
+  let dateParam = req.params.date;
+  
+  // Handle empty date parameter (current time)
+  if (!dateParam) {
+    const now = new Date();
+    return res.json({
+      unix: now.getTime(),
+      utc: now.toUTCString()
+    });
+  }
+  
+  // Check if it's a Unix timestamp (number in string form)
+  let date;
+  if (/^\d+$/.test(dateParam)) {
+    date = new Date(parseInt(dateParam));
+  } else {
+    date = new Date(dateParam);
+  }
+  
+  // Validate date
+  if (isNaN(date.getTime())) {
+    return res.json({ error: "Invalid Date" });
+  }
+  
+  // Successful response
   res.json({
-    unix: new Date().getTime(),
-    utc: new Date().toUTCString(),
-  });
-});
-
-app.get("/api/:date", (req, res) => {
-  let rawDate = new Date(req.params.date);
-
-  if (rawDate.toString() === "Invalid Date") {
-    rawDate = new Date(parseInt(req.params.date));
-  }
-
-  if (isNaN(rawDate)) {
-    return res.status(400).json({ error: "Invalid Date" });
-  }
-  return res.status(200).json({
-    unix: rawDate.getTime(),
-    utc: rawDate.toUTCString(),
+    unix: date.getTime(),
+    utc: date.toUTCString()
   });
 });
 
