@@ -1,28 +1,25 @@
-const express = require('express');
-const router = express.Router();
-
-// route untuk tanggal atau timestamp
-router.get('/api/:date?', (req, res) => {
+app.get("/api/:date?", (req, res) => {
   const dateParam = req.params.date;
-  let parsedDate;
 
+  let date;
   if (!dateParam) {
-    parsedDate = new Date();
+    // Jika parameter tidak ada, pakai waktu sekarang
+    date = new Date();
   } else if (/^\d+$/.test(dateParam)) {
-    // angka dianggap sebagai Unix timestamp dalam milidetik
-    parsedDate = new Date(Number(dateParam));
+    // Jika param hanya angka, artinya unix timestamp (milidetik)
+    date = new Date(parseInt(dateParam));
   } else {
-    parsedDate = new Date(dateParam);
+    // Jika param berbentuk string tanggal (ISO format)
+    date = new Date(dateParam);
   }
 
-  if (parsedDate.toString() === 'Invalid Date') {
-    return res.json({ error: 'Invalid Date' });
+  // Cek validitas date
+  if (date.toString() === "Invalid Date") {
+    return res.json({ error: "Invalid Date" });
   }
 
   res.json({
-    unix: parsedDate.getTime(),
-    utc: parsedDate.toUTCString(),
+    unix: date.getTime(),
+    utc: date.toUTCString(),
   });
 });
-
-module.exports = router;
