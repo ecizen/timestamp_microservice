@@ -4,7 +4,8 @@ const PORT = process.env.PORT || 3000;
 
 const timestampRoute = require('./routes/timestamp');
 
-app.use('/api', timestampRoute); // /api prefix sudah di sini
+// tidak pakai '/api' di sini
+app.use(timestampRoute);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
